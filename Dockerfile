@@ -1,15 +1,11 @@
-
-FROM eclipse-temurin:24-jdk AS build
-WORKDIR /app
-COPY . .
-RUN ./mvnw clean package -DskipTests || mvn clean package -DskipTests
-
 FROM eclipse-temurin:24-jdk
 
 WORKDIR /app
+COPY . .
 
-COPY --from=build /app/target/*.jar tourist-review-backend.jar
+RUN chmod +x mvnw
+RUN ./mvnw clean package -DskipTests
 
 EXPOSE 8081
 
-ENTRYPOINT ["java", "-jar", "tourist-review-backend.jar"]
+ENTRYPOINT ["java", "-jar", "target/tourist-review-backend.jar"]
