@@ -1,26 +1,15 @@
-# ---------- Stage 1: Build ----------
-FROM maven:3.8.5-openjdk-17 AS build
 
-# Set the working directory
+FROM eclipse-temurin:24-jdk AS build
 WORKDIR /app
-
-# Copy the entire project
 COPY . .
+RUN ./mvnw clean package -DskipTests || mvn clean package -DskipTests
 
-# Package the application without running tests
-RUN mvn clean package -DskipTests
+FROM eclipse-temurin:24-jdk
 
-# ---------- Stage 2: Run ----------
-FROM openjdk:17.0.1-jdk-slim
-
-# Set working directory in the container
 WORKDIR /app
 
-# Copy the jar file from the build stage
 COPY --from=build /app/target/*.jar tourist-review-backend.jar
 
-# Expose the port your Spring Boot app runs on
 EXPOSE 8081
 
-# Set the entry point
 ENTRYPOINT ["java", "-jar", "tourist-review-backend.jar"]
