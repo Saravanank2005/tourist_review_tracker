@@ -1,22 +1,14 @@
-FROM maven:3.9.4-eclipse-temurin-17 AS build
+# Use Java 23 early-access base image
+FROM eclipse-temurin:23-jdk
 
+# Set working directory
 WORKDIR /app
 
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
+# Copy project files
+COPY . .
 
-RUN chmod +x mvnw && ./mvnw dependency:go-offline
-
-COPY src ./src
-
+# Package with Maven
 RUN ./mvnw clean package -DskipTests
 
-FROM eclipse-temurin:17-jre
-
-WORKDIR /app
-
-COPY --from=build /app/target/tourist-review-backend.jar app.jar
-
-EXPOSE 8081
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Run the application
+CMD ["java", "-jar", "target/TouristReviewBackend-0.0.1-SNAPSHOT.jar"]
