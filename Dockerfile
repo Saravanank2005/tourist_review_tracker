@@ -1,14 +1,17 @@
-# Use Java 23 early-access base image
+# Use Java 23 base image
 FROM eclipse-temurin:23-jdk
 
 # Set working directory
 WORKDIR /app
 
-# Copy project files
+# Copy project files into the container
 COPY . .
 
-# Package with Maven
+# Give executable permission to mvnw
+RUN chmod +x ./mvnw
+
+# Package the application using Maven wrapper
 RUN ./mvnw clean package -DskipTests
 
-# Run the application
+# Run the packaged application
 CMD ["java", "-jar", "target/TouristReviewBackend-0.0.1-SNAPSHOT.jar"]
