@@ -1,23 +1,22 @@
-FROM eclipse-temurin:24-jdk
+FROM maven:3.9.4-eclipse-temurin-17 AS build
 
-# Set working directory
 WORKDIR /app
 
-# Copy Maven wrapper files first to leverage Docker layer caching
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
 
-# Download dependencies first (faster rebuilds)
 RUN chmod +x mvnw && ./mvnw dependency:go-offline
 
-# Copy the rest of the source code
 COPY src ./src
 
-# Build the application
 RUN ./mvnw clean package -DskipTests
 
-# Expose application port
+FROM eclipse-temurin:17-jre
+
+WORKDIR /app
+
+COPY --from=build /app/target/tourist-review-backend.jar app.jar
+
 EXPOSE 8081
 
-# Run the jar
-ENTRYPOINT ["java", "-jar", "target/tourist-review-backend.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
