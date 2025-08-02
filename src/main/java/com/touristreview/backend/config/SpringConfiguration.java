@@ -53,9 +53,9 @@ public class SpringConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // ✅ Allow all origins (for development only — use specific domains in production)
         config.setAllowedOriginPatterns(List.of("*"));
 
+        config.setAllowedOriginPatterns(List.of("http://localhost:5173", "https://tourist-review-tracker-1.onrender.com"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
